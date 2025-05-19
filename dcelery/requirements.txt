@@ -10,6 +10,7 @@ Django==5.2.1
 kombu==5.5.3
 prompt_toolkit==3.0.51
 python-dateutil==2.9.0.post0
+redis==6.1.0
 six==1.17.0
 sqlparse==0.5.3
 tzdata==2025.2
