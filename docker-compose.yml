@@ -1,4 +1,16 @@
 services:
+  flower:
+    image: mher/flower
+    ports:
+      - 5555:5555
+    environment:
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
   redis:
     image: redis:7.2.3-alpine
 
@@ -23,26 +35,27 @@ services:
     container_name: celery
     build:
       context: ./dcelery
-    command: celery -A dcelery worker --loglevel=INFO -Q queue1
+    command: celery -A dcelery worker --hostname=celeryWorker1@%h --loglevel=INFO -Q tasks
     volumes:
       - ./dcelery:/usr/src/app/
     environment:
       - DEBUG=1
       - SECRET_KEY=hyhj3hj3bhvhj3g37789hshgs
       - ALLOWED_HOSTS=localhost, 127.0.0.1
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
     depends_on:
-      - redis
       - django
+      - rabbitmq
 
 
-  celery2:
-    container_name: celery2
-    build:
-      context: ./celeryworker
-      dockerfile: Dockerfile
-    command: celery -A celerytask worker --loglevel=INFO -Q queue2
-    volumes:
-      - ./celeryworker:/usr/src/app/
-    depends_on:
-      - redis
-      - django
+  # celery2:
+  #   container_name: celery2
+  #   build:
+  #     context: ./celeryworker
+  #     dockerfile: Dockerfile
+  #   command: celery -A celerytask worker --loglevel=INFO -Q queue2
+  #   volumes:
+  #     - ./celeryworker:/usr/src/app/
+  #   depends_on:
+  #     - redis
+  #     - django
