@@ -35,7 +35,7 @@ services:
     container_name: celery
     build:
       context: ./dcelery
-    command: celery -A dcelery worker --hostname=celeryWorker1@%h --loglevel=INFO -Q tasks
+    command: celery -A dcelery worker --hostname=celeryWorker1@%h --loglevel=INFO -Q tasks,dead_letter -E
     volumes:
       - ./dcelery:/usr/src/app/
     environment:
