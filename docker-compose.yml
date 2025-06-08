@@ -35,17 +35,30 @@ services:
     container_name: celery
     build:
       context: ./dcelery
-    command: celery -A dcelery worker --hostname=celeryWorker1@%h --loglevel=INFO -Q tasks,dead_letter -E
+    command: celery -A dcelery worker --loglevel=INFO -Q tasks,dead_letter -E
     volumes:
       - ./dcelery:/usr/src/app/
     environment:
       - DEBUG=1
       - SECRET_KEY=hyhj3hj3bhvhj3g37789hshgs
       - ALLOWED_HOSTS=localhost, 127.0.0.1
-      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      - redis
+      - django
+      - rabbitmq
+
+  celery-beat:
+    build:
+      context: ./dcelery
+    command: celery -A dcelery beat --loglevel=INFO
+    volumes:
+      - ./dcelery:/usr/src/app/
+    environment:
+      - ALLOWED_HOSTS=localhost, 127.0.0.1
     depends_on:
       - django
       - rabbitmq
+      - redis
 
 
   # celery2:

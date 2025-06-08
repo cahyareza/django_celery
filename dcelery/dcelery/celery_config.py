@@ -9,7 +9,7 @@ import time
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dcelery.settings')
 app = Celery('dcelery')
 app.config_from_object('django.conf:settings', namespace='CELERY')
-sentry_dsn = "https://363739ad388254976cfb1c9a9867b8fd@o4509460957822976.ingest.de.sentry.io/4509460971061328"
+sentry_dsn = ""
 sentry_sdk.init(dsn=sentry_dsn, integrations=[CeleryIntegration()])
 
 app.conf.task_queues = [
